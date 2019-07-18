@@ -30,68 +30,77 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
- * simplekv_word_count.cpp -- implementation of a map-reduce algorithm
- * for counting words in text files.
- *
- * create the pool for this program using pmempool, for example:
- *	pmempool create obj --layout=simplekv -s 1G word_count
- */
+#include <libpmemobj++/experimental/array.hpp>
+#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/p.hpp>
+#include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/pext.hpp>
+#include <libpmemobj++/pool.hpp>
+#include <libpmemobj++/transaction.hpp>
+#include <stdexcept>
+#include <string>
 
-#include "simplekv.hpp"
+namespace std
+{
+template <>
+struct hash<pmem::obj::experimental::string> {
+	std::size_t
+	operator()(const pmem::obj::experimental::string &data)
+	{
+		std::string str(data.cbegin(), data.cend());
+		return std::hash<std::string>{}(str);
+	}
+};
+}
 
-static const std::string LAYOUT = "simplekv";
+namespace examples
+{
+
+namespace ptl = pmem::obj::experimental;
 
 using pmem::obj::delete_persistent;
 using pmem::obj::make_persistent;
 using pmem::obj::p;
 using pmem::obj::persistent_ptr;
 using pmem::obj::pool;
+using pmem::obj::pool_base;
 using pmem::obj::transaction;
 
-namespace ptl = pmem::obj::experimental;
+/**
+ * Key - type of the key
+ * Value - type of the value stored in hashmap
+ * N - Size of hashmap
+ */
+template <typename Key, typename Value, std::size_t N>
+class kv {
+public:
+	using value_type = Value;
 
-using simplekv_type = examples::kv<int, int, 10>;
+	kv() = default;
 
-struct root {
-	persistent_ptr<simplekv_type> simplekv;
+	Value &
+	at(const Key &key)
+	{
+		/* TODO */
+		throw std::runtime_error("Not implemented");
+	}
+
+	void
+	insert(const Key &key, const Value &val)
+	{
+		/* TODO */
+		throw std::runtime_error("Not implemented");
+	}
+
+	void begin()
+	{
+		throw std::runtime_error("Not implemented");
+	}
+
+	void end()
+	{
+		throw std::runtime_error("Not implemented");
+	}
 };
 
-int
-main(int argc, char *argv[])
-{
-	if (argc < 2) {
-		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
-		return 1;
-	}
-
-	auto path = argv[1];
-
-	auto pop = pool<root>::open(path, LAYOUT);
-	auto r = pop.root();
-
-	if (r->simplekv != nullptr) {
-		transaction::run(pop, [&]() {
-			delete_persistent<simplekv_type>(r->simplekv);
-		});
-	}
-
-	transaction::run(pop, [&]() {
-		r->simplekv = make_persistent<simplekv_type>();
-	});
-	transaction::run(pop, [&]() {
-		r->simplekv->insert(1, 1);
-		r->simplekv->insert(2, 3);
-		r->simplekv->insert(3, 4);
-		r->simplekv->insert(11, 11);
-	});
-
-	assert(r->simplekv->at(1) == 1);
-	assert(r->simplekv->at(2) == 3);
-	assert(r->simplekv->at(3) == 4);
-	assert(r->simplekv->at(11) == 11);
-
-	pop.close();
-
-	return 0;
-}
+} /* namespace examples */
