@@ -1,4 +1,4 @@
-# 2019-07 PM workshops China #
+# 2019-07 PM workshop China #
 
 These are the materials used during the workshop:
 - slides.pdf contains the slides shown
@@ -25,8 +25,15 @@ $ make
 
 ## libmemkind workshop ##
 
+```sh
+$ ./memkind /mnt/pmem-fsdax0/${USER}/
+```
 
 ## libpmem workshop ##
+
+```sh
+$ ./simple_copy simple_copy.c /mnt/pmem-fsdax0/${USER}/simple_copy.c
+```
 
 
 ## libpmemobj-cpp workshop ##
