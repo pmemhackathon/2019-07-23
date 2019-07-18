@@ -26,7 +26,7 @@ $ make
 ## libmemkind workshop ##
 
 ```sh
-$ ./memkind /mnt/pmem-fsdax0/${USER}/
+$ ./volatile /mnt/pmem-fsdax0/${USER}/
 ```
 
 ## libpmem workshop ##
