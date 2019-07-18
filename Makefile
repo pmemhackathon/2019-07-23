@@ -30,7 +30,7 @@ queue_pmemobj_cpp: queue_pmemobj_cpp.o
 	$(CXX) -o $@ $(CXXFLAGS) $^ $(LIBS)
 
 clean:
-	$(RM) *.o
+	$(RM) *.o $(PROGS)
 
 clobber: clean
 	$(RM) $(PROGS)
